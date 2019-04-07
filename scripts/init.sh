@@ -32,5 +32,5 @@ if [[ ! -f "${local_run_script_path}" ]]; then
     (>&2 printf "Initialized Convenience scripts.\n")
 else
     (>&2 printf "Initialized.  Add the following at the top of your run script\n\n")
-    (>&2 printf "\tsource ${local_convenience_source_file}\n\n")
+    (>&2 printf "\tsource ${local_convenience_source_file} \"${CONVENIENCE_VERSION}\"\n\n")
 fi
