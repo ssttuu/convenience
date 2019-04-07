@@ -7,10 +7,20 @@ source ./scripts/source
 GIT_ORG=ssttuu
 GIT_REPO=convenience
 
-INSTALLER_PATH="installer/install.sh"
+INSTALLER_PATH="build/install-$(githash-short).sh"
 SCRIPTS_ZIP_PATH="build/scripts-$(githash-short).zip"
 
 function build() {
+    build-installer
+    build-zip
+}
+
+function build-installer() {
+    mkdir -p $(dirname ${INSTALLER_PATH})
+    sed "s/\${VERSION}/$(get-version)/g" installer/install.sh > ${INSTALLER_PATH}
+}
+
+function build-zip() {
     mkdir -p $(dirname ${SCRIPTS_ZIP_PATH})
     zip -jro ${SCRIPTS_ZIP_PATH} ./scripts
 }
@@ -40,9 +50,9 @@ EOF
 function release() {
     local release_response="$(echo "$(release-body)" | git-release)"
     echo "${release_response}"
-    exit 1
     local release_id="$(echo "${release_response}" | jq -r '.id')"
     git-release-asset "${release_id}" "scripts.zip" "${SCRIPTS_ZIP_PATH}"
+    git-release-asset "${release_id}" "install.sh" "${INSTALLER_PATH}"
 }
 
 "$@"
