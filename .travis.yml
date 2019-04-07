@@ -12,7 +12,7 @@ jobs:
     - stage: Build
       script:
         - ./run build
-        - ./run stash build build
+        - ./run stash build
     - stage: Test
       script:
         - ./run test
