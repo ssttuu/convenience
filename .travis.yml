@@ -12,17 +12,17 @@ jobs:
     - stage: Build
       script:
         - ./run build
-        - ./run gsutil cp -r build "gs://convenience-assets/$(./run get-version)/$(./run githash-short)/build"
+        - ./run stash build build
     - stage: Test
       script:
         - ./run test
     - stage: Deploy
       script:
-        - ./run gsutil cp -r "gs://convenience-assets/$(./run get-version)/$(./run githash-short)/build" build
+        - ./run unstash build
         - ./run deploy
     - stage: Release
       script:
-        - ./run gsutil cp -r "gs://convenience-assets/$(./run get-version)/$(./run githash-short)/build" build
+        - ./run unstash build
         - ./run release
 
 stages:

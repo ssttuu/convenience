@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 
+source ./constants.sh
+
 function gcloud-config() {
     docker volume create gcloud-config
-    docker run --rm -it -v "gcloud-config:/config" bash -c "$(cat <<EOF
+    docker run --rm -i -v "gcloud-config:/config" alpine:3.9.2 sh -c "$(cat <<EOF
     mkdir -p /config/myconfig/configurations
     printf "[auth]\ncredential_file_override = /config/svc_account.json\n" > /config/myconfig/configurations/config_default
     echo -E '${GCP_SERVICE_ACCOUNT_CREDENTIALS}' > /config/svc_account.json

@@ -6,6 +6,7 @@ source ./docker.sh
 source ./env.sh
 source ./gcp.sh
 source ./git.sh
+source ./stash.sh
 source ./utils.sh
 
 trap - EXIT && popd > /dev/null
