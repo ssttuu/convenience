@@ -1,22 +1,27 @@
-language: bash
+language: generic
 
 services:
   - docker
 
-install: true
 jobs:
   include:
-    - stage: Test
-      script:
-        - ./run test
     - stage: Build
       script:
         - ./run build
+    - stage: Test
+      script:
+        - ./run test
     - stage: Deploy
-      if: branch = master
       script:
         - ./run deploy
     - stage: Release
-      if: branch = master
       script:
         - ./run release
+
+stages:
+  - Build
+  - Test
+  - name: Deploy
+    if: (NOT type IN (pull_request)) AND (branch = master)
+  - name: Release
+    if: (NOT type IN (pull_request)) AND (branch = master)
