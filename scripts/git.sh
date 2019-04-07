@@ -13,7 +13,7 @@ function git-tag() {
 }
 
 function git-tag-push() {
-    git push origin "$(get-version)" ${@:-}
+    git push "https://${GIT_USER}:${GIT_PASSWORD}@github.com/${GIT_ORG}/${GIT_REPO}.git" "$(get-version)" ${@:-}
 }
 
 function git-release() {
