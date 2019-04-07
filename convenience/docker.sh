@@ -46,7 +46,7 @@ function docker-build() {
 }
 
 function docker-push() {
-    local tag="${1}"
+    local tag="${1:-}"
     if [[ "${tag}" != "" ]]; then
         docker push "$(get-docker-image-name ${tag})"
     fi
