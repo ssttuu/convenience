@@ -1,0 +1,22 @@
+language: bash
+
+services:
+  - docker
+
+install: true
+jobs:
+  include:
+    - stage: Test
+      script:
+        - ./run test
+    - stage: Build
+      script:
+        - ./run build
+    - stage: Deploy
+      if: branch = master
+      script:
+        - ./run deploy
+    - stage: Release
+      if: branch = master
+      script:
+        - ./run release
