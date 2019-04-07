@@ -3,12 +3,13 @@
 source ./gcp.sh
 
 function stash() {
-    local name="${1}"
-    local path="${2}"
-    gsutil rsync -r ${path} "gs://convenience-assets/$(get-version)/$(githash-short)/${name}/${path}"
+    local path="${1}"
+    gsutil rsync -dr ${path} "gs://convenience-assets/$(get-version)/$(githash-short)/${path}"
 }
 
 function unstash() {
-    local name="${1}"
-    gsutil rsync -r "gs://convenience-assets/$(get-version)/$(githash-short)/${name}/" ./
+    local path="${1}"
+    gsutil rsync -r "gs://convenience-assets/$(get-version)/$(githash-short)/${path}/" ${path}
+    # FIXME: this is terrible
+    cloud-sdk chmod -R 777 ${path}
 }
