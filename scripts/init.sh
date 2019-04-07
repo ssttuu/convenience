@@ -28,9 +28,9 @@ fi
 local_run_script_path="./run"
 if [[ ! -f "${local_run_script_path}" ]]; then
     curl -fLsS --output "${local_run_script_path}" "https://github.com/ssttuu/convenience/releases/download/${CONVENIENCE_VERSION}/run.sh"
+    chmod +x "${local_run_script_path}"
+    (>&2 printf "Initialized Convenience scripts.\n")
 else
     (>&2 printf "Initialized.  Add the following at the top of your run script\n\n")
     (>&2 printf "\tsource ${local_convenience_source_file}\n\n")
 fi
-
-chmod +x "${local_run_script_path}"
