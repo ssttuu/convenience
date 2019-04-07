@@ -2,27 +2,35 @@
 
 set -euo pipefail
 
-source ./scripts/source
+source ./convenience/source
 
 GIT_ORG=ssttuu
 GIT_REPO=convenience
 
-INSTALLER_PATH="build/install-$(githash-short).sh"
-SCRIPTS_ZIP_PATH="build/scripts-$(githash-short).zip"
+BUILD_DIR="build/$(githash-short)"
 
 function build() {
-    build-installer
+    build-script scripts/init.sh "$(build-path init.sh)"
+    build-script scripts/install.sh "$(build-path install.sh)"
+    build-script scripts/run.sh "$(build-path run.sh)"
+    build-script scripts/source.sh "$(build-path source.sh)"
     build-zip
 }
 
-function build-installer() {
-    mkdir -p $(dirname ${INSTALLER_PATH})
-    sed "s/\${VERSION}/$(get-version)/g" installer/install.sh > ${INSTALLER_PATH}
+function build-path() {
+    echo "${BUILD_DIR}/${1}"
+}
+
+function build-script() {
+    local input="${1}"
+    local output="${2}"
+    mkdir -p $(dirname ${output})
+    sed "s/\${VERSION}/$(get-version)/g" "${input}" > "${output}"
 }
 
 function build-zip() {
-    mkdir -p $(dirname ${SCRIPTS_ZIP_PATH})
-    zip -jro ${SCRIPTS_ZIP_PATH} ./scripts
+    mkdir -p $(dirname $(build-path convenience.zip))
+    zip -jro $(build-path convenience.zip) ./convenience
 }
 
 function test() {
@@ -51,8 +59,11 @@ function release() {
     local release_response="$(echo "$(release-body)" | git-release)"
     echo "${release_response}"
     local release_id="$(echo "${release_response}" | jq -r '.id')"
-    git-release-asset "${release_id}" "scripts.zip" "${SCRIPTS_ZIP_PATH}"
-    git-release-asset "${release_id}" "install.sh" "${INSTALLER_PATH}"
+    git-release-asset "${release_id}" "convenience.zip" "$(build-path convenience.zip)"
+    git-release-asset "${release_id}" "init.sh" "$(build-path init.sh)"
+    git-release-asset "${release_id}" "install.sh" "$(build-path install.sh)"
+    git-release-asset "${release_id}" "run.sh" "$(build-path run.sh)"
+    git-release-asset "${release_id}" "source.sh" "$(build-path source.sh)"
 }
 
 "$@"
