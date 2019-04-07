@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+pushd "$(dirname ${BASH_SOURCE})" > /dev/null && trap "popd > /dev/null" EXIT
+
+source ./docker.sh
+source ./git.sh
+source ./utils.sh
+
+trap - EXIT && popd > /dev/null

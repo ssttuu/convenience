@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source ./scripts/source
+
+GIT_ORG=ssttuu
+GIT_REPO=convenience
+
+INSTALLER_PATH="installer/install.sh"
+SCRIPTS_ZIP_PATH="build/scripts-$(githash-short).zip"
+
+function build() {
+    mkdir -p $(dirname ${SCRIPTS_ZIP_PATH})
+    zip -jro ${SCRIPTS_ZIP_PATH} ./scripts
+}
+
+function test() {
+    echo "TODO"
+}
+
+function deploy() {
+    git-tag
+    git-tag-push
+}
+
+function release-body() {
+   cat <<EOF
+{
+  "tag_name": "$(get-version)",
+  "target_commitish": "master",
+  "name": "$(get-version)",
+  "body": "$(get-version)",
+  "draft": false,
+  "prerelease": false
+}
+EOF
+}
+
+function release() {
+    local release_response="$(echo "$(release-body)" | git-release)"
+    echo "${release_response}"
+    exit 1
+    local release_id="$(echo "${release_response}" | jq -r '.id')"
+    git-release-asset "${release_id}" "scripts.zip" "${SCRIPTS_ZIP_PATH}"
+}
+
+"$@"
