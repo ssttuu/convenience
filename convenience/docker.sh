@@ -25,7 +25,7 @@ function get-tags() {
 }
 
 function docker-login-with-json-key() {
-    docker login -u _json_key --password-stdin https://gcr.io < ${1}
+    docker login -u _json_key --password-stdin https://${IMAGE_HOST}
 }
 
 function docker-build() {
@@ -50,10 +50,16 @@ function docker-build() {
     docker build ${docker_formatted_labels} ${docker_formatted_tags} .
 }
 
+function docker-pull() {
+    local tag="${1}"
+    docker pull "$(get-docker-image-name ${tag})"
+}
+
 function docker-push() {
     local tag="${1:-}"
     if [[ "${tag}" != "" ]]; then
         docker push "$(get-docker-image-name ${tag})"
+        return 0
     fi
 
     for tag in $(get-tags)
